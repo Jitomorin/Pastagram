@@ -14,7 +14,7 @@ async function addUser(email, fullname, username,uid ) {
   });
 }
 function getAllUsers() {
-  firestore
+  firestore    
     .collection("users")
     .get()
     .then(function (snapshot) {
@@ -32,17 +32,24 @@ function getUserDetails(uid) {
       return snapshot.data();
     });
 }
-async function addPost(userID, imageURL, caption,postUID) {
+async function addPost(userID, imageURL, caption,postUID,username,pp) {
   
   firestore.collection("posts").doc(postUID).set({
     uid: postUID,
     userID: userID,
+    pp:pp,
+    username:username,
     datePublished:Date(),
     imageURL: imageURL,
     caption: caption,
     likes: [],
     comments: [],
   });
+}
+
+async function getPosts(){
+  const snapshot = await firestore.collection('posts').orderBy('datePublished','desc').get()
+    return snapshot.docs.map(doc => doc.data());
 }
   
 
@@ -53,4 +60,5 @@ export {
   getAllUsers,
   getUserDetails,
   addPost,
+  getPosts
 };

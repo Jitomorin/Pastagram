@@ -1,17 +1,40 @@
+import { DockSharp } from "@mui/icons-material";
+import Image from "next/image";
 import { useRouter } from "next/router";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import Feed from "../components/feed";
 import ProfileLogo from "../components/logo components/profile_logo";
 import SideBar from "../components/sidebar";
 import { useAuthContext } from "../context/UserContext";
+import { getPosts } from "../firebase/firestore";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import NotificationLogo from "../components/logo components/notification_logo";
+import CommentsLogo from "../components/logo components/comments_logo";
+import BookmarksLogo from "../components/logo components/bookmarks_logo";
 
 const Home = () => {
   const router = useRouter();
   const { currentUser, isUserLoading } = useAuthContext();
+  const [loading, setLoading] = useState();
+  const [docs, setDocs] = useState([]);
 
   useEffect(() => {
     if (!isUserLoading && !currentUser) {
       router.push("/");
     }
+
+    const fetchPosts = async () => {
+      setLoading(true);
+      getPosts().then((res) => {
+        const data = [];
+        res.forEach((doc) => {
+          data.push(doc);
+        });
+        setDocs(data);
+        console.log(docs);
+      });
+    };
+    fetchPosts();
   }, [currentUser, isUserLoading]);
 
   if (isUserLoading) {
@@ -19,11 +42,53 @@ const Home = () => {
   } else {
     return (
       <section id="home_main">
-        <nav>
+        <nav className="border-r-[1px] border-gray-300">
           <SideBar open={true} />
         </nav>
-        <main className="bg-background">
-          <div className="bg-white"></div>
+        <main className="bg-background overflow-y-auto">
+          <div>
+            {docs.map((doc) => {
+              return (
+                <div
+                  key={doc.uid}
+                  className="bg-white flex flex-col w-1/3 my-5 border-[1.2px] border-gray-300 rounded-md ml-10"
+                >
+                  <div className="flex my-2 justify-between mx-1 p-2">
+                    <div className="flex space-x-2 ">
+                      <ProfileLogo src={doc.pp} width={24} height={24} />
+                      <h2 className="font-semibold">{doc.username}</h2>{" "}
+                    </div>
+
+                    <button>
+                      <MoreHorizIcon />
+                    </button>
+                  </div>
+                  <div className="w-full">
+                    <img src={doc.imageURL} alt="" />
+                  </div>
+                  <div className="flex justify-between m-2">
+                    <div className="flex justify-around space-x-3">
+                      <button>
+                        <NotificationLogo />
+                      </button>
+                      <button>
+                        {" "}
+                        <CommentsLogo />
+                      </button>
+                    </div>
+                    <button>
+                      <BookmarksLogo />
+                    </button>
+                  </div>
+
+                  <div className="my-2 mx-2 flex space-x-1 align-middle text-center">
+                    <p className="font-semibold">{doc.username}</p>
+                    <p className="break-all text-sm">{doc.caption}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </main>
       </section>
     );

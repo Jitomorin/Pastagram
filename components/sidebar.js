@@ -22,10 +22,12 @@ import { useAuthContext } from "../context/UserContext";
 import { addPost } from "../firebase/firestore";
 import ProfileLogo from "./logo components/profile_logo";
 import { v4 as uuidv4 } from "uuid";
+import { useRouter } from "next/router";
 
 const AddPostDialog = (props) => {
   const [media, setMedia] = useState();
   const [caption, setCaption] = useState("");
+  const router = useRouter();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -37,12 +39,20 @@ const AddPostDialog = (props) => {
   const postMedia = async () => {
     const uid = uuidv4();
     uploadMedia(uid, props.uid, media).then((url) => {
-      addPost(props.currentUser.uid, url, caption, uid).then(() => {
+      addPost(
+        props.currentUser.uid,
+        url,
+        caption,
+        uid,
+        props.currentUser.userName,
+        props.currentUser.imageURL
+      ).then(() => {
         setMedia(undefined);
         setCaption("");
         props.handleClose();
       });
     });
+    router.push("/home");
   };
 
   return (
