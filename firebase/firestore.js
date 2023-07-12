@@ -51,21 +51,47 @@ async function getPosts(){
   const snapshot = await firestore.collection('posts').orderBy('datePublished','desc').get()
     return snapshot.docs.map(doc => doc.data());
 }
-async function like(postID, userID) {
-  let data;
-  firestore.collection("posts").doc(postID)
-    .where("likes", "array-contains", userID).get().then((snapshot) => {
-    data = snapshot.data()
-    if (!data) {
-      firestore.collection("posts").doc(postID).update({
-    likes: arrayUnion(userID),
-  });
-    } else {
-      firestore.collection("posts").doc(postID).update({
-        likes: arrayRemove(userID),
-      });
-    }
-   })
+async function like(post, userID) {
+  console.log('post.likes:'+post.likes)
+  let postLikes = post.likes
+  // postLikes.push(post.likes)
+  let uidIndex = postLikes.indexOf(userID)
+  console.log('postLikes: '+postLikes)
+  
+  if (uidIndex !== -1) {
+    console.log('user has liked the post')
+    //if user already liked the post
+    //create a new array without the user's id
+   postLikes.splice(uidIndex, 1)
+    console.log('newArray: '+postLikes)
+    // then update array
+    firestore.collection("posts").doc(post.uid).update({
+      likes: postLikes,
+    })
+  } else {
+    console.log('user has not liked the post')
+    //if user has not liked the post
+    //create a new array without the user's id
+    postLikes.push(userID)
+    console.log('newArray: '+postLikes)
+    firestore.collection("posts").doc(post.uid).update({
+      likes: postLikes,
+    })
+  }
+  // let data;
+  // firestore.collection("posts").doc(postID)
+  //   .where("likes", "array-contains", userID).get().then((snapshot) => {
+  //   data = snapshot.data()
+  //   if (!data) {
+  //     firestore.collection("posts").doc(postID).update({
+  //   likes: arrayUnion(userID),
+  // });
+  //   } else {
+  //     firestore.collection("posts").doc(postID).update({
+  //       likes: arrayRemove(userID),
+  //     });
+  //   }
+  //  })
 }
   
 

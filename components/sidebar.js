@@ -93,7 +93,6 @@ const AddPostDialog = (props) => {
                       src={URL.createObjectURL(media)}
                       width={300}
                       height={300}
-                      objectFit="contain"
                       alt=""
                     />
                   </div>
@@ -181,41 +180,47 @@ const SideBar = (props) => {
           className="p-4 mr-5 hover:bg-gray-50 rounded-r-full"
           background-color
         >
-          <div className="flex space-x-1">
-            {/* <Image src={NotificationLogo} alt=""></Image> */}
-            <HomeLogo />
-            <span className="pl-2 font-semibold">Home</span>
-          </div>
+          <Link href="/home">
+            <div className="flex space-x-1">
+              {/* <Image src={NotificationLogo} alt=""></Image> */}
+              <HomeLogo />
+              <span className="pl-2 font-semibold">Home</span>
+            </div>
+          </Link>
         </button>
         <button
           className="p-4 mr-5 hover:bg-gray-50 rounded-r-full"
           background-color
         >
-          <div className="flex space-x-1">
-            {/* <Image src={NotificationLogo} alt=""></Image> */}
-            <SearchLogo />
-            <span className="pl-2 font-semibold">Search</span>
-          </div>
+          <Link href="/search">
+            <div className="flex space-x-1">
+              {/* <Image src={NotificationLogo} alt=""></Image> */}
+              <SearchLogo />
+              <span className="pl-2 font-semibold">Search</span>
+            </div>
+          </Link>
         </button>
-        <button
+        {/* <button
           className="p-4 mr-5 hover:bg-gray-50 rounded-r-full"
           background-color
         >
           <div className="flex space-x-1">
-            {/* <Image src={NotificationLogo} alt=""></Image> */}
+            
             <ExploreLogo />
             <span className="pl-2 font-semibold">Explore</span>
           </div>
-        </button>
+        </button> */}
         <button
           className="p-4 mr-5 hover:bg-gray-50 rounded-r-full"
           background-color
         >
-          <div className="flex space-x-1">
-            {/* <Image src={NotificationLogo} alt=""></Image> */}
-            <MessagesLogo />
-            <span className="pl-2 font-semibold">Messages</span>
-          </div>
+          <Link href="/messages">
+            <div className="flex space-x-1">
+              {/* <Image src={NotificationLogo} alt=""></Image> */}
+              <MessagesLogo />
+              <span className="pl-2 font-semibold">Messages</span>
+            </div>
+          </Link>
         </button>
         <button
           className="p-4 mr-5 hover:bg-gray-50 rounded-r-full"
@@ -241,17 +246,16 @@ const SideBar = (props) => {
           </div>
         </button>
         <button
-          onClick={() => {
-            setOpen(true);
-          }}
           className="p-4 mr-5 hover:bg-gray-50 rounded-r-full"
           background-color
         >
-          <div className="flex space-x-1">
-            {/* <Image src={NotificationLogo} alt=""></Image> */}
-            <ProfileLogo width={24} height={24} src={currentUser.imageURL} />
-            <span className="pl-2 font-semibold">Profile</span>
-          </div>
+          <Link href="/profile">
+            <div className="flex space-x-1">
+              {/* <Image src={NotificationLogo} alt=""></Image> */}
+              <ProfileLogo width={24} height={24} src={currentUser.imageURL} />
+              <span className="pl-2 font-semibold">Profile</span>
+            </div>
+          </Link>
         </button>
         <button
           className="p-4 mr-5 hover:bg-gray-50 rounded-r-full"

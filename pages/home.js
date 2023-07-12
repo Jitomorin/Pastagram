@@ -2,7 +2,7 @@ import { DockSharp } from "@mui/icons-material";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import Feed from "../components/feed";
+// import Feed from "../components/feed";
 import ProfileLogo from "../components/logo components/profile_logo";
 import SideBar from "../components/sidebar";
 import { useAuthContext } from "../context/UserContext";
@@ -19,10 +19,16 @@ const Home = () => {
   const [loading, setLoading] = useState();
   const [docs, setDocs] = useState([]);
   const [t, setT] = useState(false);
+  const [showMoreText, setShowMoreText] = useState(false);
+  const [liked, setLiked] = useState(false);
 
   const refreshPage = () => {
     setT(!t);
   };
+  // const showMore = () => {
+
+  //   return '...';
+  // }
 
   useEffect(() => {
     if (!isUserLoading && !currentUser) {
@@ -54,7 +60,7 @@ const Home = () => {
         </nav>
         <main className="bg-background overflow-y-auto flex">
           {loading ? (
-            <div className="mx-auto align-middle">
+            <div className="m-auto align-middle">
               <CircularProgress size={50} />
             </div>
           ) : (
@@ -63,7 +69,7 @@ const Home = () => {
                 return (
                   <div
                     key={doc.uid}
-                    className="bg-white flex flex-col w-1/3 my-5 border-[1.2px] border-gray-300 rounded-md ml-10"
+                    className="bg-white flex flex-col w-2/4 my-5 border-[1.2px] border-gray-300 rounded-md ml-10"
                   >
                     <div className="flex my-2 justify-between mx-1 p-2">
                       <div className="flex space-x-2 ">
@@ -82,7 +88,8 @@ const Home = () => {
                       <div className="flex justify-around space-x-3">
                         <button
                           onClick={() => {
-                            like(doc.uid, currentUser.uid).then(() => {
+                            like(doc, currentUser.uid).then(() => {
+                              setLiked(!liked);
                               console.log("liked");
                             });
                           }}
@@ -106,8 +113,10 @@ const Home = () => {
 
                     <div className="my-2 mx-2 flex space-x-1 align-middle text-center">
                       <p className="font-semibold">{doc.username}</p>
-                      <p className="break-all text-sm text-center">
-                        {doc.caption}
+                      <p className="break-before-all text-sm text-left">
+                        {doc.caption.length > 50
+                          ? doc.caption.slice(0, 50) + "..."
+                          : doc.caption}
                       </p>
                     </div>
                   </div>
