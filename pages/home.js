@@ -6,17 +6,23 @@ import Feed from "../components/feed";
 import ProfileLogo from "../components/logo components/profile_logo";
 import SideBar from "../components/sidebar";
 import { useAuthContext } from "../context/UserContext";
-import { getPosts } from "../firebase/firestore";
+import { getPosts, like } from "../firebase/firestore";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import NotificationLogo from "../components/logo components/notification_logo";
 import CommentsLogo from "../components/logo components/comments_logo";
 import BookmarksLogo from "../components/logo components/bookmarks_logo";
+import { CircularProgress } from "@mui/material";
 
 const Home = () => {
   const router = useRouter();
   const { currentUser, isUserLoading } = useAuthContext();
   const [loading, setLoading] = useState();
   const [docs, setDocs] = useState([]);
+  const [t, setT] = useState(false);
+
+  const refreshPage = () => {
+    setT(!t);
+  };
 
   useEffect(() => {
     if (!isUserLoading && !currentUser) {
@@ -32,10 +38,11 @@ const Home = () => {
         });
         setDocs(data);
         console.log(docs);
+        setLoading(false);
       });
     };
     fetchPosts();
-  }, [currentUser, isUserLoading]);
+  }, [currentUser, isUserLoading, t]);
 
   if (isUserLoading) {
     return <div>Loading...</div>;
@@ -43,52 +50,71 @@ const Home = () => {
     return (
       <section id="home_main">
         <nav className="border-r-[1px] border-gray-300">
-          <SideBar open={true} />
+          <SideBar open={true} refreshPage={refreshPage} />
         </nav>
-        <main className="bg-background overflow-y-auto">
-          <div>
-            {docs.map((doc) => {
-              return (
-                <div
-                  key={doc.uid}
-                  className="bg-white flex flex-col w-1/3 my-5 border-[1.2px] border-gray-300 rounded-md ml-10"
-                >
-                  <div className="flex my-2 justify-between mx-1 p-2">
-                    <div className="flex space-x-2 ">
-                      <ProfileLogo src={doc.pp} width={24} height={24} />
-                      <h2 className="font-semibold">{doc.username}</h2>{" "}
-                    </div>
+        <main className="bg-background overflow-y-auto flex">
+          {loading ? (
+            <div className="mx-auto align-middle">
+              <CircularProgress size={50} />
+            </div>
+          ) : (
+            <div>
+              {docs.map((doc) => {
+                return (
+                  <div
+                    key={doc.uid}
+                    className="bg-white flex flex-col w-1/3 my-5 border-[1.2px] border-gray-300 rounded-md ml-10"
+                  >
+                    <div className="flex my-2 justify-between mx-1 p-2">
+                      <div className="flex space-x-2 ">
+                        <ProfileLogo src={doc.pp} width={24} height={24} />
+                        <h2 className="font-semibold">{doc.username}</h2>{" "}
+                      </div>
 
-                    <button>
-                      <MoreHorizIcon />
-                    </button>
-                  </div>
-                  <div className="w-full">
-                    <img src={doc.imageURL} alt="" />
-                  </div>
-                  <div className="flex justify-between m-2">
-                    <div className="flex justify-around space-x-3">
                       <button>
-                        <NotificationLogo />
-                      </button>
-                      <button>
-                        {" "}
-                        <CommentsLogo />
+                        <MoreHorizIcon />
                       </button>
                     </div>
-                    <button>
-                      <BookmarksLogo />
-                    </button>
-                  </div>
+                    <div className="w-full">
+                      <img src={doc.imageURL} alt="" />
+                    </div>
+                    <div className="flex justify-between m-2">
+                      <div className="flex justify-around space-x-3">
+                        <button
+                          onClick={() => {
+                            like(doc.uid, currentUser.uid).then(() => {
+                              console.log("liked");
+                            });
+                          }}
+                        >
+                          <NotificationLogo />
+                        </button>
+                        <button>
+                          {" "}
+                          <CommentsLogo />
+                        </button>
+                      </div>
+                      <button>
+                        <BookmarksLogo />
+                      </button>
+                    </div>
+                    <div className="mx-2">
+                      <h2 className="font-semibold">
+                        {doc.likes.length} likes
+                      </h2>
+                    </div>
 
-                  <div className="my-2 mx-2 flex space-x-1 align-middle text-center">
-                    <p className="font-semibold">{doc.username}</p>
-                    <p className="break-all text-sm">{doc.caption}</p>
+                    <div className="my-2 mx-2 flex space-x-1 align-middle text-center">
+                      <p className="font-semibold">{doc.username}</p>
+                      <p className="break-all text-sm text-center">
+                        {doc.caption}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          )}
         </main>
       </section>
     );

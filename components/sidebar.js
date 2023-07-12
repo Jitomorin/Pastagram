@@ -50,9 +50,9 @@ const AddPostDialog = (props) => {
         setMedia(undefined);
         setCaption("");
         props.handleClose();
+        props.refreshPage();
       });
     });
-    router.push("/home");
   };
 
   return (
@@ -85,7 +85,7 @@ const AddPostDialog = (props) => {
             </div>
           </DialogTitle>
           <DialogContent sx={{ height: "60vh", width: "100%" }} dividers>
-            <div className="flex ">
+            <div className="flex w-full">
               <div className="flex m-auto flex-col justify-center">
                 <div className="w-full h-28 flex space-x-2 ">
                   <div className="w-1/2">
@@ -109,12 +109,12 @@ const AddPostDialog = (props) => {
                         {props.currentUser.userName}
                       </h2>
                     </div>
-                    <div className="mt-3">
+                    <div className="mt-3 h-full w-full">
                       <textarea
                         onChange={(e) => {
                           setCaption(e.target.value);
                         }}
-                        className="w-full h-20 resize-none focus:outline-none"
+                        className="w-full h-full resize-none focus:outline-none"
                         placeholder="Write a caption..."
                       />
                     </div>
@@ -171,6 +171,7 @@ const SideBar = (props) => {
         open={open}
         currentUser={currentUser}
         handleClose={handleClose}
+        refreshPage={props.refreshPage}
       />
       <h1 className="font-Cookie text-4xl font-semibold pl-4 pt-2">
         <Link href="/home">Pastagram</Link>

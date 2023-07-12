@@ -51,6 +51,22 @@ async function getPosts(){
   const snapshot = await firestore.collection('posts').orderBy('datePublished','desc').get()
     return snapshot.docs.map(doc => doc.data());
 }
+async function like(postID, userID) {
+  let data;
+  firestore.collection("posts").doc(postID)
+    .where("likes", "array-contains", userID).get().then((snapshot) => {
+    data = snapshot.data()
+    if (!data) {
+      firestore.collection("posts").doc(postID).update({
+    likes: arrayUnion(userID),
+  });
+    } else {
+      firestore.collection("posts").doc(postID).update({
+        likes: arrayRemove(userID),
+      });
+    }
+   })
+}
   
 
 
@@ -60,5 +76,6 @@ export {
   getAllUsers,
   getUserDetails,
   addPost,
-  getPosts
+  getPosts,
+  like,
 };
